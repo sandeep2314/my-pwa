@@ -16,7 +16,7 @@ export default function AssignPerson() {
     loadData();
   }, []);
 
-  // Load locations and staff
+  // ✅ Load locations and staff
   async function loadData() {
     setLoading(true);
     try {
@@ -48,9 +48,9 @@ export default function AssignPerson() {
 
       setLocations(dataLocations.a || []);
 
-      // Fetch staff
+      // ✅ Fetch staff with pStaffId
       const formData = new URLSearchParams();
-      formData.append("pStaffId", "");
+      formData.append("pStaffId", ""); // send empty if no staff selected
       formData.append("pCompanyId", user.CompanyId || "1");
 
       const resStaff = await fetch("/getstaff", {
@@ -81,22 +81,22 @@ export default function AssignPerson() {
     }
   }
 
-  // Submit assignment
+  // ✅ Submit assignment
   async function submitAssign() {
     if (!selectedLocation || !selectedManager || !selectedWorker) {
       alert("Please select all fields");
       return;
     }
 
-    const manager = staff.find((s) => s.staffID === selectedManager.value);
-    const worker = staff.find((s) => s.staffID === selectedWorker.value);
+    const manager = staff.find((s) => s.StaffId === selectedManager.value);
+    const worker = staff.find((s) => s.StaffId === selectedWorker.value);
 
     if (!manager || !worker) {
       alert("Invalid selection");
       return;
     }
 
-    if (parseInt(manager.HNo || 0) < parseInt(worker.HNo || 0)) {
+    if (parseInt(manager.HNo) < parseInt(worker.HNo)) {
       alert("Invalid designation hierarchy");
       return;
     }
@@ -138,51 +138,51 @@ export default function AssignPerson() {
   }));
 
   const staffOptions = staff.map((s) => ({
-    value: s.staffID, // ✅ fix key
-    label: `${s.StaffName} (${s.DName || ""}-${s.HNo || ""})`,
-  }));
+  value: s.StaffId,
+  label: `${s.StaffName} (${s.DName || ""}-${s.HNo || ""})`,
+}));
 
   return (
     <div style={containerStyle}>
-      <h3>Assign Staff to Location</h3>
-      {loading && <p>Loading...</p>}
+  <h3>Assign Staff to Location</h3>
+  {loading && <p>Loading...</p>}
 
-      {/* LOCATION */}
-      <Select
-        options={locationOptions}
-        value={selectedLocation}
-        onChange={setSelectedLocation}
-        placeholder="Select Location"
-        isSearchable
-        styles={customStyles}
-      />
+  {/* LOCATION */}
+  <Select
+    options={locationOptions}
+    value={selectedLocation}
+    onChange={setSelectedLocation}
+    placeholder="Select Location"
+    isSearchable
+    styles={customStyles}  // ✅ fixed
+  />
 
-      {/* WORKER */}
-      <Select
-        options={staffOptions}
-        value={selectedWorker}
-        onChange={setSelectedWorker}
-        placeholder="Select Worker"
-        isSearchable
-        styles={customStyles}
-      />
+  {/* WORKER */}
+  <Select
+    options={staffOptions}
+    value={selectedWorker}
+    onChange={setSelectedWorker}
+    placeholder="Select Worker"
+    isSearchable
+    styles={customStyles}  // ✅ fixed
+  />
 
-      {/* MANAGER */}
-      <Select
-        options={staffOptions}
-        value={selectedManager}
-        onChange={setSelectedManager}
-        placeholder="Select Manager"
-        isSearchable
-        styles={customStyles}
-      />
+  {/* MANAGER */}
+  <Select
+    options={staffOptions}
+    value={selectedManager}
+    onChange={setSelectedManager}
+    placeholder="Select Manager"
+    isSearchable
+    styles={customStyles}  // ✅ fixed
+  />
 
-      <button onClick={submitAssign} style={btnStyle}>
-        Assign
-      </button>
-    </div>
-  );
-}
+  <button onClick={submitAssign} style={btnStyle}>
+    Assign
+  </button>
+</div>
+  )
+  }
 
 // Styles
 const containerStyle = {
@@ -240,6 +240,6 @@ const customStyles = {
   }),
   input: (provided) => ({
     ...provided,
-    color: "#fff",
+    color: "#fff", // ✅ this makes typed text visible
   }),
 };

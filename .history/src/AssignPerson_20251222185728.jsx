@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Select from "react-select"; // ✅ import react-select
+import Select from "react-select";
 
 export default function AssignPerson() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -16,15 +16,17 @@ export default function AssignPerson() {
     loadData();
   }, []);
 
-  // Load locations and staff
+  // ✅ Load locations and staff
   async function loadData() {
     setLoading(true);
     try {
+      const backendUrl = "http://103.165.119.119:16511"; // <-- your backend IP & port
+
       // Fetch locations
-      const resLocations = await fetch("/getlocation", {
+      const resLocations = await fetch(`${backendUrl}/getlocation`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ pCompanyId: user.CompanyId || "1" }),
+        body: new URLSearchParams({ pCompanyId: user?.CompanyId || "1" }),
       });
 
       const textLocations = await resLocations.text();
@@ -51,9 +53,9 @@ export default function AssignPerson() {
       // Fetch staff
       const formData = new URLSearchParams();
       formData.append("pStaffId", "");
-      formData.append("pCompanyId", user.CompanyId || "1");
+      formData.append("pCompanyId", user?.CompanyId || "1");
 
-      const resStaff = await fetch("/getstaff", {
+      const resStaff = await fetch(`${backendUrl}/getstaff`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: formData,
@@ -81,36 +83,38 @@ export default function AssignPerson() {
     }
   }
 
-  // Submit assignment
+  // ✅ Submit assignment
   async function submitAssign() {
     if (!selectedLocation || !selectedManager || !selectedWorker) {
       alert("Please select all fields");
       return;
     }
 
-    const manager = staff.find((s) => s.staffID === selectedManager.value);
-    const worker = staff.find((s) => s.staffID === selectedWorker.value);
+    const manager = staff.find((s) => s.StaffId === selectedManager.value);
+    const worker = staff.find((s) => s.StaffId === selectedWorker.value);
 
     if (!manager || !worker) {
       alert("Invalid selection");
       return;
     }
 
-    if (parseInt(manager.HNo || 0) < parseInt(worker.HNo || 0)) {
+    if (parseInt(manager.HNo) < parseInt(worker.HNo)) {
       alert("Invalid designation hierarchy");
       return;
     }
 
     setLoading(true);
     try {
+      const backendUrl = "http://103.165.119.119:16511";
+
       const body = new URLSearchParams({
         pLocationId: selectedLocation.value,
         pManagerId: selectedManager.value,
         pWorkerId: selectedWorker.value,
-        pCompanyId: user.CompanyId,
+        pCompanyId: user?.CompanyId || "1",
       });
 
-      const res = await fetch("/addStaffLocation", {
+      const res = await fetch(`${backendUrl}/addStaffLocation`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body,
@@ -138,7 +142,7 @@ export default function AssignPerson() {
   }));
 
   const staffOptions = staff.map((s) => ({
-    value: s.staffID, // ✅ fix key
+    value: s.StaffId,
     label: `${s.StaffName} (${s.DName || ""}-${s.HNo || ""})`,
   }));
 
@@ -206,7 +210,6 @@ const btnStyle = {
   marginTop: "10px",
 };
 
-// Custom styles for react-select
 const customStyles = {
   control: (provided) => ({
     ...provided,
