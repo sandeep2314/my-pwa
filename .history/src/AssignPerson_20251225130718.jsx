@@ -116,8 +116,6 @@ export default function AssignPerson() {
         body,
       });
 
-      
-
       const data = await res.json();
 
       if (data.a && data.a.length > 0) {

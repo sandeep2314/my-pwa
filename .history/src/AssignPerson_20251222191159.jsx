@@ -21,7 +21,7 @@ export default function AssignPerson() {
     setLoading(true);
     try {
       // Fetch locations
-      const resLocations = await fetch("/api/getlocation", {
+      const resLocations = await fetch("/getlocation", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ pCompanyId: user.CompanyId || "1" }),
@@ -53,7 +53,7 @@ export default function AssignPerson() {
       formData.append("pStaffId", "");
       formData.append("pCompanyId", user.CompanyId || "1");
 
-      const resStaff = await fetch("/api/getstaff", {
+      const resStaff = await fetch("/getstaff", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: formData,
@@ -110,13 +110,11 @@ export default function AssignPerson() {
         pCompanyId: user.CompanyId,
       });
 
-      const res = await fetch("/api/getStaffLocation", {
+      const res = await fetch("/addStaffLocation", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body,
       });
-
-      
 
       const data = await res.json();
 

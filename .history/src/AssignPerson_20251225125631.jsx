@@ -110,13 +110,11 @@ export default function AssignPerson() {
         pCompanyId: user.CompanyId,
       });
 
-      const res = await fetch("/api/getStaffLocation", {
+      const res = await fetch("/api/addStaffLocation", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body,
       });
-
-      
 
       const data = await res.json();
 
