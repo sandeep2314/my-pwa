@@ -1,0 +1,3 @@
+[build]
+  publish = "dist"                  # your Vite build output
+  functions = "netlify/functions"   # folder where serverless functions will live
