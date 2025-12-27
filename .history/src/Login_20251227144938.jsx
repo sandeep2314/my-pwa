@@ -1,55 +1,44 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-// Use environment variable for API URL
-const BASE_URL = import.meta.env.VITE_API_URL;
-const LOGIN_URL = `${BASE_URL}/loginmahi`;
+//const LOGIN_URL = "/loginmahi";
+//const LOGIN_URL = import.meta.env.VITE_API_URL;
+const LOGIN_URL = import.meta.env.VITE_API_URL || "http://localhost:16511/loginmahi";
 
 export default function Login() {
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const body = new URLSearchParams({
-      rMobileNo: mobile,
-      rPassword: password,
-      pAppName: "RealSchool",
-      pAppType: "R"
-    });
+    const formData = new URLSearchParams();
+    formData.append("rMobileNo", mobile);
+    formData.append("rPassword", password);
+    formData.append("pAppName", "RealSchool");
+    formData.append("pAppType", "R");
 
     try {
       const res = await fetch(LOGIN_URL, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body
+        body: formData.toString(),
       });
 
-      if (!res.ok) {
-        alert("Login failed ❌");
-        setLoading(false);
-        return;
-      }
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { alert("Invalid server response ❌"); return; }
 
-      const data = await res.json();
-
-      if (data?.a?.length > 0) {
+      if (data.a && data.a.length > 0) {
         localStorage.setItem("user", JSON.stringify(data.a[0]));
         alert("Login successful ✅");
-        navigate("/dashboard"); // or reload page if needed
-      } else {
-        alert("Invalid credentials ❌");
+        window.location.reload();
       }
     } catch (err) {
       console.error(err);
       alert("Network error ❌");
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   return (
