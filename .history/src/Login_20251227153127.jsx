@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Remove trailing slash automatically
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.VITE_API_URL
 const LOGIN_URL = `${BASE_URL}/loginmahi`;
 
 export default function Login() {
