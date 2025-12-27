@@ -1,8 +1,6 @@
 import { useState } from "react";
 
-//const LOGIN_URL = "/loginmahi";
-const LOGIN_URL = import.meta.env.VITE_API_URL;
-
+const LOGIN_URL = "/loginmahi";
 
 export default function Login() {
   const [mobile, setMobile] = useState("");
